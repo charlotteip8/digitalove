@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>buymeflowers</title>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #ffffff;
+      cursor: crosshair;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    }
+
+    .flower {
+      position: fixed;
+      pointer-events: none;
+      user-select: none;
+      transform: translate(-50%, -50%);
+      transition: transform 0.2s ease;
+    }
+
+    .flower:hover {
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    h1{
+        text-align: center;
+        justify-content: center;
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        font-weight: 400;
+    }
+
+    .flower {
+    animation: bloom 0.4s ease;
+}
+
+@keyframes bloom {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+  </style>
+</head>
+
+<body>
+
+<h1>"can you buy me flowers?"</h1>
+
+<script>
+  const flowers = ["🌸", "🌷", "🌼", "🌹", "💐", "🪻","🌺","🪷","🌻"];
+
+  let lastSpawn = 0;
+
+  document.addEventListener("mousemove", (e) => {
+
+    // controls flower density
+    const now = Date.now();
+    if (now - lastSpawn < 40) return;
+    lastSpawn = now;
+
+    const flower = document.createElement("div");
+    flower.classList.add("flower");
+
+    flower.innerText =
+      flowers[Math.floor(Math.random() * flowers.length)];
+
+    // slight randomness
+    const offsetX = Math.random() * 30 - 15;
+    const offsetY = Math.random() * 30 - 15;
+
+    flower.style.left = e.clientX + offsetX + "px";
+    flower.style.top = e.clientY + offsetY + "px";
+
+    // random sizing
+    flower.style.fontSize =
+      20 + Math.random() * 25 + "px";
+
+    // random rotation
+    flower.style.rotate =
+      `${Math.random() * 40 - 20}deg`;
+
+    document.body.appendChild(flower);
+  });
+</script>
+
+</body>
+</html>
