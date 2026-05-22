@@ -1,100 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>buymeflowers</title>
-    <link rel="icon" type="image/x-icon" href="favicon.png">
-  <link rel="stylesheet" href="https://use.typekit.net/nfn6fai.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: #ffffff;
-      cursor: crosshair;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    }
+<title>buymeflowers</title>
 
-    .flower {
-      position: fixed;
-      pointer-events: none;
-      user-select: none;
-      transform: translate(-50%, -50%);
-      transition: transform 0.2s ease;
-    }
+<link rel="icon" type="image/x-icon" href="favicon.png">
 
-    .flower:hover {
-      transform: translate(-50%, -50%) scale(1.2);
-    }
+<link rel="stylesheet" href="https://use.typekit.net/nfn6fai.css">
 
-    h1{
-        text-align: center;
-        justify-content: center;
-font-family: "lores-12", sans-serif;
-font-weight: 400;
-font-style: normal;
-    }
+<style>
 
-    .flower {
-    animation: bloom 0.4s ease;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
-@keyframes bloom {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
+body{
+  overflow:hidden;
+
+  background:white;
+
+  cursor:crosshair;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  height:100vh;
+
+  font-family:"lores-12", sans-serif;
+  font-weight:400;
+  font-style:normal;
 }
-  </style>
+
+/* TITLE */
+
+h1{
+  position:fixed;
+
+  text-align:center;
+
+  font-size:32px;
+  letter-spacing:2px;
+  font-weight: 400;
+
+  z-index:1;
+
+  color:black;
+
+  pointer-events:none;
+}
+
+/* FLOWERS */
+
+.flower{
+  position:fixed;
+
+  pointer-events:none;
+  user-select:none;
+
+  transform:translate(-50%, -50%);
+
+  animation:bloom 0.4s ease;
+}
+
+@keyframes bloom{
+
+  from{
+    opacity:0;
+
+    transform:
+      translate(-50%, -50%)
+      scale(0)
+      rotate(-20deg);
+  }
+
+  to{
+    opacity:1;
+
+    transform:
+      translate(-50%, -50%)
+      scale(1)
+      rotate(0deg);
+  }
+
+}
+
+/* HOME BUTTON */
+
+.home{
+  position:fixed;
+
+  top:40px;
+  left:40px;
+
+  z-index:100;
+}
+
+.home img{
+  width:50px;
+
+  transition:0.25s ease;
+
+  filter:
+    drop-shadow(0 0 10px rgba(255,192,203,0.5));
+}
+
+.home img:hover{
+  transform:
+    scale(0.9)
+    rotate(-8deg);
+
+  opacity:0.8;
+}
+
+.home img:active{
+  transform:
+    scale(0.8)
+    rotate(8deg);
+}
+
+/* OPTIONAL SOFT GLOW */
+
+.glow{
+  position:fixed;
+
+  width:600px;
+  height:600px;
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      rgba(255,192,203,0.15),
+      transparent 70%
+    );
+
+  pointer-events:none;
+
+  z-index:0;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>"can you buy me flowers?"</h1>
+<!-- HOME -->
+
+<div class="home">
+
+  <a href="https://charlotteip8.github.io/digitalove">
+
+    <img src="favicon.png">
+
+  </a>
+
+</div>
+
+<!-- TITLE -->
+
+<h1>
+  "can you buy me flowers?"
+</h1>
+
+<!-- GLOW -->
+
+<div class="glow"></div>
 
 <script>
-  const flowers = ["🌸", "🌷", "🌼", "🌹", "💐", "🪻","🌺","🪷","🌻"];
 
-  let lastSpawn = 0;
+/* FLOWER TYPES */
 
-  document.addEventListener("mousemove", (e) => {
+const flowers = [
+  "🌸",
+  "🌷",
+  "🌼",
+  "🌹",
+  "💐",
+  "🪻",
+  "🌺",
+  "🪷",
+  "🌻"
+];
 
-    // controls flower density
-    const now = Date.now();
-    if (now - lastSpawn < 40) return;
-    lastSpawn = now;
+let lastSpawn = 0;
 
-    const flower = document.createElement("div");
-    flower.classList.add("flower");
+/* FLOWER TRAIL */
 
-    flower.innerText =
-      flowers[Math.floor(Math.random() * flowers.length)];
+document.addEventListener("mousemove", (e) => {
 
-    // slight randomness
-    const offsetX = Math.random() * 30 - 15;
-    const offsetY = Math.random() * 30 - 15;
+  // control flower density
 
-    flower.style.left = e.clientX + offsetX + "px";
-    flower.style.top = e.clientY + offsetY + "px";
+  const now = Date.now();
 
-    // random sizing
-    flower.style.fontSize =
-      20 + Math.random() * 25 + "px";
+  if(now - lastSpawn < 40) return;
 
-    // random rotation
-    flower.style.rotate =
-      `${Math.random() * 40 - 20}deg`;
+  lastSpawn = now;
 
-    document.body.appendChild(flower);
-  });
+  const flower =
+    document.createElement("div");
+
+  flower.classList.add("flower");
+
+  // random flower
+
+  flower.innerText =
+    flowers[Math.floor(Math.random() * flowers.length)];
+
+  // random offset
+
+  const offsetX =
+    Math.random() * 30 - 15;
+
+  const offsetY =
+    Math.random() * 30 - 15;
+
+  flower.style.left =
+    e.clientX + offsetX + "px";
+
+  flower.style.top =
+    e.clientY + offsetY + "px";
+
+  // random size
+
+  flower.style.fontSize =
+    20 + Math.random() * 25 + "px";
+
+  // random rotation
+
+  flower.style.rotate =
+    `${Math.random() * 40 - 20}deg`;
+
+  document.body.appendChild(flower);
+
+  // remove flowers after awhile
+
+  setTimeout(() => {
+    flower.remove();
+  }, 2500);
+
+});
+
 </script>
 
 </body>

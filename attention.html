@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <link rel="icon" type="image/x-icon" href="favicon.png">
-<title>attention</title>
+<title>validation</title>
 <link rel="stylesheet" href="https://use.typekit.net/nfn6fai.css">
 
 <style>
@@ -17,8 +17,10 @@
 
 body{
   overflow:hidden;
-  background:black;
-  font-family:Arial, sans-serif;
+  background:rgb(255, 255, 255);
+font-family: "lores-12", sans-serif;
+font-weight: 400;
+font-style: normal;
 }
 
 /* CAMERA */
@@ -70,7 +72,7 @@ video{
 
   font-size:40px;
 
-  animation:floatUp 2s ease-out forwards;
+  animation:floatUp 10s ease-out forwards;
 
   pointer-events:none;
   user-select:none;
@@ -99,28 +101,225 @@ video{
   }
 
 }
+/* PHOTOBOOTH FRAME */
 
-.instruction{
+.frame{
   position:fixed;
-  bottom:30px;
+  top:50%;
+  left:50%;
+
+  width:72%;
+  height:72%;
+
+  transform:translate(-50%, -50%);
+
+  border:12px solid white;
+  border-radius:30px;
+
+  pointer-events:none;
+  z-index:5;
+
+  box-shadow:
+    0 0 40px rgba(255,255,255,0.3);
+}
+
+/* CONTROLS */
+
+.controls{
+  position:fixed;
+  bottom:40px;
   width:100%;
 
-  text-align:center;
+  display:flex;
+  justify-content:center;
+
+  z-index:20;
+}
+
+button{
+  border:none;
+  padding:16px 28px;
+
+  border-radius:999px;
+
+  background:white;
+  color:black;
+
+  font-family:"lores-12", sans-serif;
+  font-size:16px;
+  letter-spacing:2px;
+
+  cursor:pointer;
+
+  transition:0.2s;
+}
+
+button:hover{
+  transform:scale(1.05);
+}
+
+/* COUNTDOWN */
+
+#countdown{
+  position:fixed;
+  top:50%;
+  left:50%;
+
+  transform:translate(-50%, -50%);
+
+  font-size:120px;
   color:white;
 
-  font-size:14px;
-  letter-spacing:1px;
+  z-index:50;
 
-  z-index:10;
+  text-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+/* FLASH */
+
+#flash{
+  position:fixed;
+  inset:0;
+
+  background:white;
+
+  opacity:0;
+  pointer-events:none;
+
+  z-index:100;
+}
+
+.flash-active{
+  animation:flash 0.3s;
+}
+
+@keyframes flash{
+  0%{opacity:0;}
+  50%{opacity:1;}
+  100%{opacity:0;}
+}
+
+/* HIDDEN CANVAS */
+
+canvas{
+  display:none;
+}
+
+/* PHOTO RESULT */
+
+#photoResult{
+  position:fixed;
+
+  right:20px;
+  bottom:20px;
+
+  width:180px;
+
+  border:8px solid white;
+  border-radius:20px;
+
+  display:none;
+
+  z-index:30;
+}
+
+.mirrorText{
+  position:fixed;
+
+  top:20%;
+  left:32%;
+
+
+  color:white;
+
+  font-size:70px;
+  letter-spacing:4px;
+
+  text-transform:uppercase;
+
+  z-index:20;
+
+  pointer-events:none;
+
+  text-shadow:
+    0 0 20px rgba(255,255,255,0.4);
+
+  opacity:0.9;
+}
+
+.home{
+  position:fixed;
+
+  top:40px;
+  left:40px;
+
+  z-index:100;
+}
+
+.home img{
+  width:50px;
+
+  transition:0.25s ease;
+
+  filter:
+    drop-shadow(0 0 10px rgba(255,192,203,0.5));
+}
+
+.home img:hover{
+  transform:
+    scale(0.9)
+    rotate(-8deg);
+
+  opacity:0.8;
+}
+
+.home img:active{
+  transform:
+    scale(0.8)
+    rotate(8deg);
 }
 
 </style>
 </head>
 
+<div class="home">
+          <a href="https://charlotteip8.github.io/digitalove">
+        <img src="favicon.png" >
+          </a>
+    </div>
+
 <body>
+
+  <div class="mirrorText">
+  you look good
+</div>
 
 <!-- CAMERA -->
 <video id="camera" autoplay playsinline></video>
+
+<!-- PHOTO FRAME -->
+<div class="frame"></div>
+
+<!-- CONTROLS -->
+<div class="controls">
+
+  <button id="captureBtn">
+    TAKE PHOTO
+  </button>
+
+</div>
+
+<!-- COUNTDOWN -->
+<div id="countdown"></div>
+
+<!-- FLASH -->
+<div id="flash"></div>
+
+<!-- CANVAS -->
+<canvas id="canvas"></canvas>
+
+<!-- RESULT -->
+<img id="photoResult"/>
 
 <script>
 
@@ -183,6 +382,97 @@ function createHeart(){
 /* CONTINUOUS HEART LOOP */
 
 setInterval(createHeart, 300);
+
+const captureBtn = document.getElementById("captureBtn");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const photoResult =
+  document.getElementById("photoResult");
+
+const countdown =
+  document.getElementById("countdown");
+
+const flash =
+  document.getElementById("flash");
+
+/* CAPTURE FUNCTION */
+
+captureBtn.addEventListener("click", async () => {
+
+  // COUNTDOWN
+
+  for(let i = 3; i > 0; i--){
+
+    countdown.innerText = i;
+
+    await wait(1000);
+
+  }
+
+  countdown.innerText = "";
+
+  // FLASH EFFECT
+
+  flash.classList.add("flash-active");
+
+  setTimeout(() => {
+    flash.classList.remove("flash-active");
+  }, 300);
+
+  // DRAW VIDEO TO CANVAS
+
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+
+  // mirror image
+  ctx.translate(canvas.width, 0);
+  ctx.scale(-1, 1);
+
+  ctx.drawImage(
+    video,
+    0,
+    0,
+    canvas.width,
+    canvas.height
+  );
+
+  // reset transform
+  ctx.setTransform(1,0,0,1,0,0);
+
+  // EXPORT IMAGE
+
+  const image =
+    canvas.toDataURL("image/png");
+
+photoResult.src = image;
+
+photoResult.style.display = "block";
+
+/* AUTO DOWNLOAD */
+
+const link = document.createElement("a");
+
+link.href = image;
+
+link.download =
+  "photobooth-" + Date.now() + ".png";
+
+document.body.appendChild(link);
+
+link.click();
+
+document.body.removeChild(link);
+
+});
+
+/* WAIT FUNCTION */
+
+function wait(ms){
+  return new Promise(resolve =>
+    setTimeout(resolve, ms)
+  );
+}
 
 </script>
 

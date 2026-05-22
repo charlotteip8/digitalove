@@ -79,3 +79,35 @@ body {
         transform: translateY(0px);
     }
 }
+
+  .home{
+  position:fixed;
+
+  top:40px;
+  left:40px;
+
+  z-index:100;
+}
+
+.home img{
+  width:50px;
+
+  transition:0.25s ease;
+
+  filter:
+    drop-shadow(0 0 10px rgba(255,192,203,0.5));
+}
+
+.home img:hover{
+  transform:
+    scale(0.9)
+    rotate(-8deg);
+
+  opacity:0.8;
+}
+
+.home img:active{
+  transform:
+    scale(0.8)
+    rotate(8deg);
+}
